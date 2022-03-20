@@ -1,0 +1,33 @@
+pid="$(ps -eo "pid cmd" | grep -v grep | grep clipmenud | head -n 1 | awk '{print $1;}')"
+if [ $(echo "$pid" | wc -w) -eq 0 ]; then
+
+    clippid="$(ps -eo "pid cmd" | grep -v grep | grep clipnotify | head -n 1 | awk '{print $1;}')"
+    if [ $(echo "$clippid" | wc -w) -eq 0 ]; then
+        notify-send -t 2000 -u normal -i dove "No clipnotify found. Continuing..."
+    else
+        kill -9 $clippid
+        notify-send -t 2000 -u normal -i dove "Stopped clipnotify with pid $clippid"
+        exit 0
+    fi
+
+
+
+    clipmenud &
+    notify-send -t 2000 -u normal -i dove "Started clipmenud with pid $!"
+else
+    kill -9 $pid
+    notify-send -t 2000 -u normal -i dove "Stopped clipmenud with pid $pid"
+
+    # TODO : Don't copy/paste this code block
+    clippid="$(ps -eo "pid cmd" | grep -v grep | grep clipnotify | head -n 1 | awk '{print $1;}')"
+    if [ $(echo "$clippid" | wc -w) -eq 0 ]; then
+        notify-send -t 2000 -u normal -i dove "No clipnotify found. Continuing..."
+    else
+        kill -9 $clippid
+        notify-send -t 2000 -u normal -i dove "Stopped clipnotify with pid $clippid"
+        exit 0
+    fi
+fi
+
+
+# Note: In case of error, can use fuser or lsof to check who owns lockfile at fuser $XDG_RUNTIME_DIR/clipmenu.6.jomb/session_lock

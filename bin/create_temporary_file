@@ -1,0 +1,9 @@
+echo "Enter filename: "
+read FILENAME
+echo "Enter contents: "
+read -s CONTENTS
+DIR="/tmp/create_temporary_file"
+FILE="$DIR/$FILENAME"
+mkdir -p $DIR
+echo $CONTENTS > $FILE
+echo "Ok. Stored to $FILE"

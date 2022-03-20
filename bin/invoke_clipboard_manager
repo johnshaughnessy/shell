@@ -1,0 +1,6 @@
+pid="$(ps -eo "pid cmd" | grep -v grep | grep clipmenud | head -n 1 | awk '{print $1;}')"
+if [ $(echo "$pid" | wc -w) -eq 0 ]; then
+    notify-send -t 1000 -u normal -i dove "Clipboard manager is disabled";
+else
+    CM_HISTLENGTH=10 CM_LAUNCHER=rofi clipmenu -m -2 -dpi 240 -width 90 -i
+fi

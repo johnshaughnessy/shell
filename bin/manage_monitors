@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Find all active monitors
+xrandr | sed -rn 's/([^ ]*-[0-9]) ([^ dis]*connected)(.*)/\1/p' | sort > /tmp/jlomb.display.available ;
+
+if [ ! -z $1 ] && [ $1 == "--enable-all" ] ; then
+    # Enable all the available monitors
+    cat /tmp/jlomb.display.available | while read monitor;
+    do
+        xrandr --output $monitor --auto;
+    done
+
+    # Clean up
+    rm /tmp/jlomb.display.available
+
+    exit 0
+fi
+
+
+# Find active monitors
+xrandr --listactivemonitors | sed -rn 's/(.*) (.*\-[0-9])/\2/p' | sort > /tmp/jlomb.display.active ;
+
+# Select the desired monitor
+DESIRED_MONITOR=$(comm -23 /tmp/jlomb.display.available /tmp/jlomb.display.active) ;
+if [ -z $DESIRED_MONITOR ] ; then
+    DESIRED_MONITOR=$(head -n 1 /tmp/jlomb.display.available);
+fi
+
+# Disactivate all the active monitors
+cat /tmp/jlomb.display.active | while read monitor;
+do
+    if [ "$monitor" != "$DESIRED_MONITOR" ] ; then
+        xrandr --output "$monitor" --off;
+    fi
+done
+
+# Activate the desired monitor
+xrandr --output "$DESIRED_MONITOR" --auto;
+
+# Clean up
+rm /tmp/jlomb.display.active
+rm /tmp/jlomb.display.available

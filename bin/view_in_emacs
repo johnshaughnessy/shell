@@ -1,0 +1,2 @@
+tee /tmp/echo_to_emacs_output
+emacsclient /tmp/echo_to_emacs_output &

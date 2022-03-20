@@ -1,0 +1,5 @@
+gh repo list --public --json name --jq ".[].name" > /tmp/private_repo_names.txt
+
+while read -r name;
+do gh repo edit "johnshaughnessy/$name" --visibility=private;
+done < /tmp/private_repo_names.txt
