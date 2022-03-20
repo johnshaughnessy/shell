@@ -1,3 +1,5 @@
+#!/bin/bash
+
 WIFI=$(ls -1 /sys/class/net/ | grep wl)
 IP=$(ip addr show dev $WIFI | grep inet\ | sed -r 's/\s*inet ([^\/]+).*/\1/')
 HOST=$(cat /etc/hostname)

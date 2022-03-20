@@ -1,0 +1,4 @@
+#!/bin/bash
+pactl set-sink-mute @DEFAULT_SINK@ 0;
+pactl set-sink-volume @DEFAULT_SINK@ "+$1%"
+notify-send -t 1000 -u normal -i dove "Volume: $(pulsemixer --get-volume | cut -d " " -f 1)"

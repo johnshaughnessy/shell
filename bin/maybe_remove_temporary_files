@@ -1,3 +1,5 @@
+#!/bin/bash
+
 DIR="/tmp/create_temporary_file"
 
 # TODO This doesn't work correctly when called from .zlogout

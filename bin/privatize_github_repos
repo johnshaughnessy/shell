@@ -1,3 +1,5 @@
+#!/bin/bash
+
 gh repo list --public --json name --jq ".[].name" > /tmp/private_repo_names.txt
 
 while read -r name;

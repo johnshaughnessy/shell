@@ -1,0 +1,11 @@
+#!/bin/bash
+
+pactl set-sink-mute @DEFAULT_SINK@ toggle;
+
+if [ $(pulsemixer --get-mute) -eq 1 ]; then
+    mute_state="MUTED";
+else
+    mute_state="UNMUTED";
+fi
+
+notify-send -t 1000 -u normal -i dove $mute_state

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 pid="$(ps -eo "pid cmd" | grep -v grep | grep clipmenud | head -n 1 | awk '{print $1;}')"
 if [ $(echo "$pid" | wc -w) -eq 0 ]; then
 
