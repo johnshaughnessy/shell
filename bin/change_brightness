@@ -1,0 +1,9 @@
+#!/bin/bash
+
+brightness=$(cat /sys/class/backlight/intel_backlight/brightness)
+
+new_brightness=$( python -c "print(min(512, max($brightness + $1, 0)) )" )
+
+echo "$new_brightness" | tee /sys/class/backlight/intel_backlight/brightness
+
+notify-send -t 100 -u normal -i dove "Brightness: $new_brightness"
