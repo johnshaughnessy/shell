@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+# Usage:
+# ignore <language> <directory>
+#
+# Example:
+# ignore rust .
+#
+
+if [ -z $1 ] || [ -z $2 ]; then
+    echo "Usage: ignore <language> <directory>"
+    exit 0
+fi
+
+SCRIPTPATH=$(dirname "$0")
+
+if [ $1 = "rust" ]; then
+    cp "$SCRIPTPATH/rust-gitignore" $2/.gitignore
+    echo "Copied .gitignore for rust:"
+    bat $2/.gitignore
+else
+    echo "Unrecognized language. ignore <language> <directory>"
+fi

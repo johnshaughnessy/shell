@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Directory where the images will be saved
+DIR="$HOME/media/image/webcam"
+
+# File prefix
+PREFIX="webcam"
+
+# Find the highest numbered file in the directory
+LAST_FILE=$(ls ${DIR}/${PREFIX}*.jpg | sort -V | tail -n 1)
+
+if [ -z "$LAST_FILE" ]; then
+    # If no files are found, start with 000
+    NUM=0
+else
+    # Extract the number from the filename and increment it
+    BASENAME=$(basename $LAST_FILE)
+    NUM=$(echo $BASENAME | sed -e "s/^$PREFIX//" -e 's/.jpg$//')
+    NUM=$((10#$NUM + 1))
+fi
+
+# Generate the new filename
+FILENAME=$(printf "%s%03d.jpg" $PREFIX $NUM)
+
+# Capture the image
+fswebcam ${DIR}/${FILENAME}
