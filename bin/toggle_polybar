@@ -1,0 +1,65 @@
+#!/bin/bash
+
+substitute() {
+    local file=$1
+    local key=$2
+    local value=$3
+
+    if [ ! -f $file ]; then
+        echo "substitute() error: File not found. [$file]";
+        return 1
+    fi
+
+    local substitution="s/^$key \{0,1\}=.*/$key = $value/"
+    local success=$(sed "$substitution" $file | grep "$key = $value" | wc --lines)
+    if [ $success -ne 1 ]; then
+        echo "substitute() error: Key/value pair not found. Searched for \"$key = $value\" in [$file]"
+        return 1
+    fi
+    sed -i "$substitution" $file
+    return 0
+}
+
+num_desktops=$(xprop -root _NET_NUMBER_OF_DESKTOPS | sed 's/.*= //')
+ini_bar="$HOME/dotfiles/polybar/.config/polybar/bottom-bar.ini";
+ini_xworkspaces="$HOME/dotfiles/polybar/.config/polybar/xworkspaces.ini";
+
+compute_width="""
+num_desktops = int( $num_desktops )
+desktop_size = 1.5
+padding = 4
+print( padding + (num_desktops * desktop_size ))
+"""
+width=$(python -c "$compute_width")
+
+compute_offset="""
+width = float( $width )
+print(50 - width / 2)
+"""
+offset=$(python -c "$compute_offset")
+
+substitute $ini_bar width "$width%"
+substitute $ini_bar height "20pt"
+substitute $ini_bar "offset-x" "$offset%"
+substitute $ini_bar "dpi" "400"
+
+# e.g. "1", "2", "8", "9"
+desktops_string="$(xprop -root _NET_DESKTOP_NAMES | sed -E 's/.*= (.*)/\1/')"
+node /home/john/src/shell/bin/gen_icons.js "$desktops_string"
+
+
+echo $desktops_string
+
+killall polybar
+if [ "$1" = "on" ]; then
+    # On key down
+    # Auto-timeout: We don't get key-up on desktop switch
+    timeout 3s polybar bottom
+elif [ "$1" = "keep" ]; then
+    # Keep polybar alive longer when specifically told to
+    # (e.g. to use mouse wheel to scroll thru workspaces)
+    timeout 15s polybar bottom
+elif [ "$1" = "off" ]; then
+    # On key release
+    killall polybar
+fi
